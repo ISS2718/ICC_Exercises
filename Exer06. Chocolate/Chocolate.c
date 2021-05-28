@@ -2,17 +2,17 @@
 
 int main (int argc, char *argv[]) {
     int n; // Money
-    scanf("%d", &n);
+    scanf ("%d", &n);
     int c; // Price
-    scanf("%d", &c);
+    scanf ("%d", &c);
     int m;// Packages for exchange
-    scanf("%d", &m);
+    scanf ("%d", &m);
 
-    if(m < 0) {
+    if (m < 0) {
         m = 1;
     }
 
-    printf("Money: %d, Price of Chocolate: %d, exchange cost: %d \n", n, c, m);
+    printf ("Money: %d, Price of Chocolate: %d, exchange cost: %d \n", n, c, m);
 
     int purchased_choc = n / c;
 
@@ -29,7 +29,7 @@ int main (int argc, char *argv[]) {
         }
     }
 
-    printf("Osmar eaten: %d chocolates", eaten_choc);
+    printf ("Osmar eaten: %d chocolates", eaten_choc);
 
     return 1;
 }
