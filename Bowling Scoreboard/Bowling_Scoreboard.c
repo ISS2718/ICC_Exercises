@@ -1,9 +1,5 @@
 #include <stdio.h>
 
-#define nonebonus 0
-#define spare 1
-#define strike 3
-
 void print_Score_Table(int a, int b, int c, int n);
 void print_score(int n);
 
@@ -20,12 +16,14 @@ int main () {
                 break;
             }
         } else if (i < 18) {
-            if(score[i] == 10){
+            int itsPair = !(i % 2);
+            if(score[i] == 10 && itsPair){
                 i++;
             }
         }
     }
 
+    //ScoreBoard print
     for (int i = 0; i < 19; i+= 2) {
         int a = score[i];
         int b = score[i + 1];
@@ -36,42 +34,33 @@ int main () {
             print_Score_Table(a, b, c, i);
         }
     }
+    //-----
 
+    //Number Score Calculus and print
     int n_score = 0;
-    int flag_spare_strike = 0;
-    for (int i = 0; i < 19; i++) {
+    for (int i = 0; i < 21; i++) {
         n_score += score[i];
-
-        if (i % 2 && score[i] < 10) {
-            if (score[i] + score[i + 1] == 10) {
-                flag_spare_strike = spare;
-            } else {
-                flag_spare_strike = nonebonus;
-            }
-        } else if (i % 2) {
-            flag_spare_strike = strike;
-        }
-
-        if (flag_spare_strike == 1) {
-            if(score[i] != 10) {
+        
+        if (i < 18) { 
+            int itsodd = i % 2;
+            if (!itsodd && score[i] == 10) {
+                i++;
                 n_score += score[i + 1];
-            } else {
-                n_score += score[i + 2];
-            }
-            flag_spare_strike = nonebonus;
-        } else if (flag_spare_strike == 2) {
-            if(score[i] != 10) {
-                n_score += score[i + 1];
-                if(score[i + 1] != 10) {
+            
+                if(score[i + 1] != 10 || i == 17) {
                     n_score += score[i + 2];
-                }    
-            } else {
-                n_score += score[i + 3];
+                } else if (i != 17){
+                    n_score += score[i + 3];
+                }
+            } else if (itsodd) {
+                if (score[i - 1] + score[i] == 10) {
+                    n_score += score[i + 1];
+                }
             }
         }
     }
-
-    printf("\n%d", n_score);    
+    printf("\n%d", n_score);
+    //-----    
 }
 
 void print_Score_Table(int a, int b, int c, int n) {
@@ -110,10 +99,10 @@ void print_Score_Table(int a, int b, int c, int n) {
             _a = 'X';
             if (b != 10) {
                 _b = b + '0';
-                if ((b + c) == 10) {
-                    _c = '/';
-                } else {
+                if ((b + c) != 10) {
                     _c = c + '0';
+                } else {
+                    _c = '/';
                 } 
             } else {
                 _b = 'X';
@@ -122,7 +111,6 @@ void print_Score_Table(int a, int b, int c, int n) {
                 } else {
                     _c = 'X';
                 }
-                
             }  
         }
         printf ("%c %c %c", _a, _b, _c);
