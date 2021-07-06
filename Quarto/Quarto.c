@@ -167,18 +167,17 @@ int CheckSecondaryDiagonalForWinner(Board* B) {
 	return 0;
 }
 
-int GetPiece(Board* B, int PlayerNumber) {
-	printf("Player %d, please enter a valid piece number: ", PlayerNumber);
+int GetPiece(Board* B) {
 	int Entry;
 	scanf("%d", &Entry);
 	if (B->RemainingPieces[Entry] >= 0 && Entry < BoardSize * BoardSize) {
 		return Entry;
 	}
 	else {
-		return GetPiece(B, PlayerNumber);
+		return GetPiece(B);
 	}
 }
-
+/*
 Position GetCell(Board* B, int PlayerNumber) {
 	printf("Player %d, please enter a valid row, collum pair: ", PlayerNumber);
 	Position Pair;
@@ -188,6 +187,27 @@ Position GetCell(Board* B, int PlayerNumber) {
 	}
 	else {
 		return GetCell(B, PlayerNumber);
+	}
+}
+*/
+Position arrayToMatrix (int num) {
+	Position result; 
+
+    result.Collum = num % BoardSize;
+    result.Row = (num - result.Collum )/ BoardSize;
+
+	return result;
+}
+
+Position GetCell (Board *B){
+	int n;
+	scanf("%d", &n);
+	Position position = arrayToMatrix (n);
+	if(n > 0 && n < BoardSize * BoardSize && 
+	B->Cells[position.Row][position.Collum].IsEmpity) {
+		return position;
+	} else {
+		return GetCell (B);
 	}
 }
 
@@ -200,9 +220,9 @@ int main(int Argument01, char** Argument02) {
 	while (!ThereIsAWinner && NumberOfTurns < BoardSize * BoardSize) {
 		PrintBoard(&B);
 		PrintRemainingPieces(&B);
-		int ChosenPiece = GetPiece(&B, CurrentPlayer);
+		int ChosenPiece = GetPiece(&B);
 		int OtherPlayer = (CurrentPlayer + 1) % 2;
-		Position ChosenCell = GetCell(&B, OtherPlayer);
+		Position ChosenCell = GetCell(&B);
 		PlacePieceOnBoard(&B, ChosenPiece, ChosenCell);
 		ThereIsAWinner = (CheckMainDiagonalForWinner(&B) | CheckSecondaryDiagonalForWinner(&B));
 		for (int i = 0; i < BoardSize; i++) {
@@ -218,4 +238,6 @@ int main(int Argument01, char** Argument02) {
 	else {
 		printf("It's a draw.\n");
 	}
+
+	system("cls"); 
 }
