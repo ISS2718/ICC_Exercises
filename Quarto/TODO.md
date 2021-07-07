@@ -2,7 +2,8 @@
 
 TODO :
 - [ ] Make Work it!
-- [ ] Remake Print victory condition
+- [ ] Remake Print line of victory
+- [ ] Remake entry
 MADE :
 - [x] Matriz -> Array
 - [x] Check for winner -> function

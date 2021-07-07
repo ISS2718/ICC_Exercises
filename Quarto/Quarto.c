@@ -96,11 +96,22 @@ void PrintRemainingPieces(Board* B) {
 
 void WinningCondition(Board* B, int C1, int C0) {
 	if (C1) {
-		B->WinningProp = (int)log2(C1);
+		for (int i = 3; i > -1; i--){
+			 B->WinningProp = 0b00000001 & C1 >> i;;
+			if (B->WinningProp) {
+				B->WinningProp *= i;
+				break;
+			}
+		}
 		B->WinningPropState = 1;
-	}
-	if (C0) {
-		B->WinningProp = (int)log2(C0);
+	} else if (C0) {
+		for (int i = 3; i > -1; i--){
+			B->WinningProp = 0b00000001 & C0 >> i;;
+			if (B->WinningProp) {
+				B->WinningProp *= i;
+				break;
+			}
+		}
 		B->WinningPropState = 0;
 	}
 }
@@ -116,8 +127,8 @@ int RowIsComplete(Board* B, int Row) {
 
 int CheckRowForWinner(Board* B, int Row) {
 	if (RowIsComplete(B, Row)) {
-		int CompletedWith1 = B->Cells[Row][0].Piece;
-		int CompletedWith0 = ~(B->Cells[Row][0].Piece);
+		unsigned int CompletedWith1 = B->Cells[Row][0].Piece;
+		unsigned int CompletedWith0 = ~(B->Cells[Row][0].Piece);
 		for (int i = 1; i < BoardSize; i++) {
 			CompletedWith1 &= B->Cells[Row][i].Piece;
 			CompletedWith0 &= ~(B->Cells[Row][i].Piece);
@@ -199,7 +210,7 @@ int CheckSecondaryDiagonalForWinner(Board* B) {
 
 int GetPiece(Board* B) {
 	int Entry;
-	scanf("%d", &Entry);
+	scanf("%x", &Entry);
 	if (B->RemainingPieces[Entry] >= 0 && Entry < BoardSize * BoardSize) {
 		return Entry;
 	}
@@ -231,7 +242,7 @@ Position ArrayToMatrix (int num) {
 
 Position GetCell (Board *B){
 	int n;
-	scanf("%d", &n);
+	scanf("%x", &n);
 	Position position = ArrayToMatrix (n);
 	if(n >= 0 && n < BoardSize * BoardSize && 
 	B->Cells[position.Row][position.Column].IsEmpity) {
@@ -300,30 +311,30 @@ void PrintVictory(Board *B, int player) {
 	switch (B->WinningProp) {
 		case 3:
 			 	if(B->WinningPropState) {
-					printf("%s", "escura");
+					printf("%s", "\nescura");
 				} else {
-					printf("%s", "branca");;
+					printf("%s", "\nbranca");;
 				}
 			break;
 		case 2:
 				if(B->WinningPropState) {
-					printf("%s", "pequena");
+					printf("%s", "\npequena");
 				} else {
-					printf("%s", "grande");;
+					printf("%s", "\ngrande");;
 				}
 			break;	
 		case 1:
 				if(B->WinningPropState) {
-					printf("%s", "quadrada");
+					printf("%s", "\nquadrada");
 				} else {
-					printf("%s", "circular");;
+					printf("%s", "\ncircular");;
 				}
 			break;
 		case 0:
 				if(B->WinningPropState) {
-					printf("%s", "oca");
+					printf("%s", "\noca");
 				} else {
-					printf("%s", "solida");;
+					printf("%s", "\nsolida");;
 				}
 			break;	
 	}
@@ -337,7 +348,6 @@ int main(int Argument01, char** Argument02) {
 	int ThereIsAWinner = 0;
 	int CurrentPlayer = 0;
 	while (!ThereIsAWinner && NumberOfTurns < BoardSize * BoardSize) {
-		PrintBoard(&B);
 		int ChosenPiece = GetPiece(&B);
 		int OtherPlayer = (CurrentPlayer + 1) % 2;
 		Position ChosenCell = GetCell(&B);
