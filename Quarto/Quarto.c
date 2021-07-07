@@ -29,9 +29,9 @@ void PlacePieceOnCell(Cell* C, int Piece) {
 
 void PrintCell(Cell* C) {
 	if(C->IsEmpity) {
-		printf("_");
+		printf("-");
 	} else {
-		printf("%x", C->Piece);
+		printf("%X", C->Piece);
 	}
 }
 
@@ -127,8 +127,8 @@ int RowIsComplete(Board* B, int Row) {
 
 int CheckRowForWinner(Board* B, int Row) {
 	if (RowIsComplete(B, Row)) {
-		unsigned int CompletedWith1 = B->Cells[Row][0].Piece;
-		unsigned int CompletedWith0 = ~(B->Cells[Row][0].Piece);
+		int CompletedWith1 = B->Cells[Row][0].Piece;
+		int CompletedWith0 = ~(B->Cells[Row][0].Piece);
 		for (int i = 1; i < BoardSize; i++) {
 			CompletedWith1 &= B->Cells[Row][i].Piece;
 			CompletedWith0 &= ~(B->Cells[Row][i].Piece);
@@ -210,7 +210,7 @@ int CheckSecondaryDiagonalForWinner(Board* B) {
 
 int GetPiece(Board* B) {
 	int Entry;
-	scanf("%x", &Entry);
+	scanf("%X", &Entry);
 	if (B->RemainingPieces[Entry] >= 0 && Entry < BoardSize * BoardSize) {
 		return Entry;
 	}
@@ -242,7 +242,7 @@ Position ArrayToMatrix (int num) {
 
 Position GetCell (Board *B){
 	int n;
-	scanf("%x", &n);
+	scanf("%X", &n);
 	Position position = ArrayToMatrix (n);
 	if(n >= 0 && n < BoardSize * BoardSize && 
 	B->Cells[position.Row][position.Column].IsEmpity) {
@@ -287,23 +287,23 @@ void PrintVictory(Board *B, int player) {
 		case 'R':
 			 	for(int i = 0; i < BoardSize; i++) {
 				 	int index = B->WinningIndex;
-				 	printf("%x", B->Cells[index][i].Piece);
+				 	printf("%X", B->Cells[index][i].Piece);
 			 	}
 			break;
 		case 'C':
 				for(int i = 0; i < BoardSize; i++) {
 				 	int index = B->WinningIndex;
-				 	printf("%x", B->Cells[i][index].Piece);
+				 	printf("%X", B->Cells[i][index].Piece);
 			 	}	
 			break;	
 		case 'P':
 				for(int i = 0; i < BoardSize; i++) {
-				 	printf("%x", B->Cells[i][i].Piece);
+				 	printf("%X", B->Cells[i][i].Piece);
 				}	
 			break;
 		case 'S':
 				for(int i = 0; i < BoardSize; i++) {
-				 	printf("%x", B->Cells[i][BoardSize - 1 - i].Piece);
+				 	printf("%X", B->Cells[i][BoardSize - 1 - i].Piece);
 				}	
 			break;	
 	}
