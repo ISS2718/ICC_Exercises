@@ -1,7 +1,7 @@
 # Quarto 
 
 TODO :
-
+- [ ] Make Work it!
 MADE :
 - [x] Matriz -> Array
 - [x] Check for winner -> function
