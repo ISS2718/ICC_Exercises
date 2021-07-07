@@ -1,8 +1,10 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<math.h>
 
 #define BoardSize 4
 #define NumberOfProperties 4
+#define BinaryMask 15
 
 void PrintInBinary(int Decimal) {
 	int Current = Decimal;
@@ -28,9 +30,10 @@ void PlacePieceOnCell(Cell* C, int Piece) {
 }
 
 void PrintCell(Cell* C) {
-	if(C->IsEmpity) {
+	if (C->IsEmpity) {
 		printf("-");
-	} else {
+	}
+	else {
 		printf("%X", C->Piece);
 	}
 }
@@ -38,23 +41,27 @@ void PrintCell(Cell* C) {
 typedef struct Board {
 	Cell Cells[BoardSize][BoardSize];
 	int RemainingPieces[BoardSize * BoardSize];
-	char WinningOrientation;
+	char WinningLine;
 	int WinningIndex;
+	const char* Dictionary[2][BoardSize];
 	int WinningPropState;
 	int WinningProp;
 }Board;
-/*
-1º bit: furo(1) ou sem furo(0) - menos significativo
-2º bit: quadrado(1) ou circular(0)
-3º bit: pequeno(1) ou grande(0)
-4ª bit: preto(1) ou branco(0)
- */
+
 void InitializeBoard(Board* B) {
-	B->WinningOrientation = '\0';
+	B->Dictionary[0][0] = "solida\0";
+	B->Dictionary[0][1] = "circular\0";
+	B->Dictionary[0][2] = "grande\0";
+	B->Dictionary[0][3] = "branca\0";
+	B->Dictionary[1][0] = "oca\0";
+	B->Dictionary[1][1] = "quadrada\0";
+	B->Dictionary[1][2] = "pequena\0";
+	B->Dictionary[1][3] = "escura\0";
+	B->WinningLine = '\0';
 	B->WinningIndex = -1;
 	B->WinningPropState = -1;
 	B->WinningProp = -1;
-	for (int i = 0; i < BoardSize; i++){
+	for (int i = 0; i < BoardSize; i++) {
 		for (int j = 0; j < BoardSize; j++) {
 			InitializeCell(&(B->Cells[i][j]));
 		}
@@ -96,22 +103,11 @@ void PrintRemainingPieces(Board* B) {
 
 void WinningCondition(Board* B, int C1, int C0) {
 	if (C1) {
-		for (int i = 3; i > -1; i--){
-			 B->WinningProp = 0b00000001 & C1 >> i;;
-			if (B->WinningProp) {
-				B->WinningProp *= i;
-				break;
-			}
-		}
+		B->WinningProp = (int)log2(C1);
 		B->WinningPropState = 1;
-	} else if (C0) {
-		for (int i = 3; i > -1; i--){
-			B->WinningProp = 0b00000001 & C0 >> i;;
-			if (B->WinningProp) {
-				B->WinningProp *= i;
-				break;
-			}
-		}
+	}
+	else if (C0) {
+		B->WinningProp = (int)log2(C0);
 		B->WinningPropState = 0;
 	}
 }
@@ -128,10 +124,10 @@ int RowIsComplete(Board* B, int Row) {
 int CheckRowForWinner(Board* B, int Row) {
 	if (RowIsComplete(B, Row)) {
 		int CompletedWith1 = B->Cells[Row][0].Piece;
-		int CompletedWith0 = ~(B->Cells[Row][0].Piece);
+		int CompletedWith0 = ~(B->Cells[Row][0].Piece)&(BinaryMask);
 		for (int i = 1; i < BoardSize; i++) {
 			CompletedWith1 &= B->Cells[Row][i].Piece;
-			CompletedWith0 &= ~(B->Cells[Row][i].Piece);
+			CompletedWith0 &= ~(B->Cells[Row][i].Piece)&(BinaryMask);
 		}
 		WinningCondition(B, CompletedWith1, CompletedWith0);
 		return (CompletedWith1 | CompletedWith0);
@@ -151,10 +147,10 @@ int ColumnIsComplete(Board* B, int Column) {
 int CheckColumnForWinner(Board* B, int Column) {
 	if (ColumnIsComplete(B, Column)) {
 		int CompletedWith1 = B->Cells[0][Column].Piece;
-		int CompletedWith0 = ~(B->Cells[0][Column].Piece);
+		int CompletedWith0 = ~(B->Cells[0][Column].Piece)&(BinaryMask);
 		for (int i = 1; i < BoardSize; i++) {
-			CompletedWith1 &= B->Cells[i][Column].Piece;	
-			CompletedWith0 &= ~(B->Cells[i][Column]).Piece;
+			CompletedWith1 &= B->Cells[i][Column].Piece;
+			CompletedWith0 &= ~(B->Cells[i][Column].Piece)&(BinaryMask);
 		}
 		WinningCondition(B, CompletedWith1, CompletedWith0);
 		return (CompletedWith1 | CompletedWith0);
@@ -174,10 +170,10 @@ int MainDiagonalIsComplete(Board* B) {
 int CheckMainDiagonalForWinner(Board* B) {
 	if (MainDiagonalIsComplete(B)) {
 		int CompletedWith1 = B->Cells[0][0].Piece;
-		int CompletedWith0 = ~(B->Cells[0][0].Piece);
+		int CompletedWith0 = ~(B->Cells[0][0].Piece)&(BinaryMask);
 		for (int i = 1; i < BoardSize; i++) {
 			CompletedWith1 &= B->Cells[i][i].Piece;
-			CompletedWith0 &= ~(B->Cells[i][i].Piece);
+			CompletedWith0 &= ~(B->Cells[i][i].Piece)&(BinaryMask);
 		}
 		WinningCondition(B, CompletedWith1, CompletedWith0);
 		return (CompletedWith1 | CompletedWith0);
@@ -197,10 +193,10 @@ int SecondaryDiagonalIsComplete(Board* B) {
 int CheckSecondaryDiagonalForWinner(Board* B) {
 	if (SecondaryDiagonalIsComplete(B)) {
 		int CompletedWith1 = B->Cells[0][BoardSize - 1].Piece;
-		int CompletedWith0 = ~(B->Cells[0][BoardSize - 1].Piece);
+		int CompletedWith0 = ~(B->Cells[0][BoardSize - 1].Piece)&(BinaryMask);
 		for (int i = 1; i < BoardSize; i++) {
 			CompletedWith1 &= B->Cells[i][BoardSize - 1 - i].Piece;
-			CompletedWith0 &= ~(B->Cells[i][BoardSize - 1 - i].Piece);
+			CompletedWith0 &= ~(B->Cells[i][BoardSize - 1 - i].Piece)&(BinaryMask);
 		}
 		WinningCondition(B, CompletedWith1, CompletedWith0);
 		return (CompletedWith1 | CompletedWith0);
@@ -210,7 +206,7 @@ int CheckSecondaryDiagonalForWinner(Board* B) {
 
 int GetPiece(Board* B) {
 	int Entry;
-	scanf("%X", &Entry);
+	scanf_s("%X", &Entry);
 	if (B->RemainingPieces[Entry] >= 0 && Entry < BoardSize * BoardSize) {
 		return Entry;
 	}
@@ -218,126 +214,98 @@ int GetPiece(Board* B) {
 		return GetPiece(B);
 	}
 }
-/*
-Position GetCell(Board* B, int PlayerNumber) {
-	printf("Player %d, please enter a valid row, Column pair: ", PlayerNumber);
-	Position Pair;
-	scanf("%d%d", &Pair.Row, &Pair.Column);
-	if (B->Cells[Pair.Row][Pair.Column].IsEmpity && Pair.Row < BoardSize && Pair.Column < BoardSize) {
-		return Pair;
-	}
-	else {
-		return GetCell(B, PlayerNumber);
-	}
-}
-*/
-Position ArrayToMatrix (int num) {
-	Position result; 
 
-    result.Column = num % BoardSize;
-    result.Row = (num - result.Column )/ BoardSize;
-
+Position ArrayToMatrix(int num) {
+	Position result;
+	result.Column = num % BoardSize;
+	result.Row = (num - result.Column) / BoardSize;
 	return result;
 }
 
-Position GetCell (Board *B){
+Position GetCell(Board* B) {
 	int n;
-	scanf("%X", &n);
-	Position position = ArrayToMatrix (n);
-	if(n >= 0 && n < BoardSize * BoardSize && 
-	B->Cells[position.Row][position.Column].IsEmpity) {
+	scanf_s("%X", &n);
+	Position position = ArrayToMatrix(n);
+	if (n >= 0 && n < BoardSize * BoardSize && B->Cells[position.Row][position.Column].IsEmpity) {
 		return position;
-	} else {
-		return GetCell (B);
+	}
+	else {
+		return GetCell(B);
 	}
 }
 
-int CheckForWinner(Board *B, int player){
+void PrintWinningRow(Board* B) {
 	for (int i = 0; i < BoardSize; i++) {
-		  if(CheckRowForWinner(B, i)) {
-			B->WinningOrientation = 'R';
+		printf("%X", BoardSize * (B->WinningIndex) + i);
+	}
+}
+
+void PrintWinningColumn(Board* B) {
+	for (int i = 0; i < BoardSize; i++) {
+		printf("%X", B->WinningIndex + i * BoardSize);
+	}
+}
+
+void PrintMainDiagonal(Board* B) {
+	for (int i = 0; i < BoardSize; i++) {
+		printf("%X", i + i * BoardSize);
+	}
+}
+
+void PrintSecondaryDiagonal(Board* B) {
+	for (int i = 0; i < BoardSize; i++) {
+		printf("%X", i * BoardSize + BoardSize - i - 1);
+	}
+}
+
+int CheckForWinner(Board* B, int player) {
+	for (int i = 0; i < BoardSize; i++) {
+		if (CheckRowForWinner(B, i)) {
+			B->WinningLine = 'R';
 			B->WinningIndex = i;
 			return 1;
-		  }
+		}
 	}
 	for (int i = 0; i < BoardSize; i++) {
 		if (CheckColumnForWinner(B, i)) {
-			B->WinningOrientation = 'C';
+			B->WinningLine = 'C';
 			B->WinningIndex = i;
 			return 1;
 		}
 	}
 
-	if(CheckMainDiagonalForWinner(B)) {
-		B->WinningOrientation = 'P';
+	if (CheckMainDiagonalForWinner(B)) {
+		B->WinningLine = 'P';
 		return 1;
 	}
 
-	if(CheckSecondaryDiagonalForWinner(B)) {
-		B->WinningOrientation = 'S';
+	if (CheckSecondaryDiagonalForWinner(B)) {
+		B->WinningLine = 'S';
 		return 1;
 	}
 	return 0;
 }
 
-void PrintVictory(Board *B, int player) {
+void PrintVictory(Board* B, int player) {
 	PrintBoard(B);
 	printf("%d\n", (player + 1));
-	switch (B->WinningOrientation) {
-		case 'R':
-			 	for(int i = 0; i < BoardSize; i++) {
-				 	int index = B->WinningIndex;
-				 	printf("%X", B->Cells[index][i].Piece);
-			 	}
-			break;
-		case 'C':
-				for(int i = 0; i < BoardSize; i++) {
-				 	int index = B->WinningIndex;
-				 	printf("%X", B->Cells[i][index].Piece);
-			 	}	
-			break;	
-		case 'P':
-				for(int i = 0; i < BoardSize; i++) {
-				 	printf("%X", B->Cells[i][i].Piece);
-				}	
-			break;
-		case 'S':
-				for(int i = 0; i < BoardSize; i++) {
-				 	printf("%X", B->Cells[i][BoardSize - 1 - i].Piece);
-				}	
-			break;	
+	switch (B->WinningLine) {
+	case 'R':
+		PrintWinningRow(B);
+		break;
+	case 'C':
+		PrintWinningColumn(B);
+		break;
+	case 'P':
+		PrintMainDiagonal(B);
+		break;
+	case 'S':
+		PrintSecondaryDiagonal(B);
+		break;
 	}
-	
-	switch (B->WinningProp) {
-		case 3:
-			 	if(B->WinningPropState) {
-					printf("%s", "\nescura");
-				} else {
-					printf("%s", "\nbranca");;
-				}
-			break;
-		case 2:
-				if(B->WinningPropState) {
-					printf("%s", "\npequena");
-				} else {
-					printf("%s", "\ngrande");;
-				}
-			break;	
-		case 1:
-				if(B->WinningPropState) {
-					printf("%s", "\nquadrada");
-				} else {
-					printf("%s", "\ncircular");;
-				}
-			break;
-		case 0:
-				if(B->WinningPropState) {
-					printf("%s", "\noca");
-				} else {
-					printf("%s", "\nsolida");;
-				}
-			break;	
-	}
+	int Row = B->WinningPropState;
+	int Column = B->WinningProp;
+	printf("\n%s", B->Dictionary[Row][Column]);
 }
 
 
@@ -356,10 +324,11 @@ int main(int Argument01, char** Argument02) {
 		NumberOfTurns++;
 		CurrentPlayer = OtherPlayer;
 	}
-	
+
 	if (ThereIsAWinner) {
 		PrintVictory(&B, CurrentPlayer);
-	} else {
+	}
+	else {
 		PrintBoard(&B);
 		printf("0");
 	}
