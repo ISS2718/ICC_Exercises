@@ -29,3 +29,8 @@ int main (void) {
 15 % BoardSize = 1
 (15 - 1) / BoardSize  = 3
 */
+
+// barca / preta
+// solido / oca
+// grande / pequena
+// Circular / Quadrada
