@@ -206,7 +206,7 @@ int CheckSecondaryDiagonalForWinner(Board* B) {
 
 int GetPiece(Board* B) {
 	int Entry;
-	scanf_s("%X", &Entry);
+	scanf("%X", &Entry);
 	if (B->RemainingPieces[Entry] >= 0 && Entry < BoardSize * BoardSize) {
 		return Entry;
 	}
@@ -224,7 +224,7 @@ Position ArrayToMatrix(int num) {
 
 Position GetCell(Board* B) {
 	int n;
-	scanf_s("%X", &n);
+	scanf("%X", &n);
 	Position position = ArrayToMatrix(n);
 	if (n >= 0 && n < BoardSize * BoardSize && B->Cells[position.Row][position.Column].IsEmpity) {
 		return position;
