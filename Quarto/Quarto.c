@@ -122,7 +122,7 @@ int CheckRowForWinner(Board* B, int Row) {
 			CompletedWith1 &= B->Cells[Row][i].Piece;
 			CompletedWith0 &= ~(B->Cells[Row][i].Piece);
 		}
-		WinningCondition(&B, CompletedWith1, CompletedWith0);
+		WinningCondition(B, CompletedWith1, CompletedWith0);
 		return (CompletedWith1 | CompletedWith0);
 	}
 	return 0;
@@ -145,7 +145,7 @@ int CheckColumnForWinner(Board* B, int Column) {
 			CompletedWith1 &= B->Cells[i][Column].Piece;	
 			CompletedWith0 &= ~(B->Cells[i][Column]).Piece;
 		}
-		WinningCondition(&B, CompletedWith1, CompletedWith0);
+		WinningCondition(B, CompletedWith1, CompletedWith0);
 		return (CompletedWith1 | CompletedWith0);
 	}
 	return 0;
@@ -168,7 +168,7 @@ int CheckMainDiagonalForWinner(Board* B) {
 			CompletedWith1 &= B->Cells[i][i].Piece;
 			CompletedWith0 &= ~(B->Cells[i][i].Piece);
 		}
-		WinningCondition(&B, CompletedWith1, CompletedWith0);
+		WinningCondition(B, CompletedWith1, CompletedWith0);
 		return (CompletedWith1 | CompletedWith0);
 	}
 	return 0;
@@ -191,7 +191,7 @@ int CheckSecondaryDiagonalForWinner(Board* B) {
 			CompletedWith1 &= B->Cells[i][BoardSize - 1 - i].Piece;
 			CompletedWith0 &= ~(B->Cells[i][BoardSize - 1 - i].Piece);
 		}
-		WinningCondition(&B, CompletedWith1, CompletedWith0);
+		WinningCondition(B, CompletedWith1, CompletedWith0);
 		return (CompletedWith1 | CompletedWith0);
 	}
 	return 0;
@@ -243,27 +243,26 @@ Position GetCell (Board *B){
 
 int CheckForWinner(Board *B, int player){
 	for (int i = 0; i < BoardSize; i++) {
-		  if(CheckRowForWinner(&B, i)) {
-			printf("Entrei");
+		  if(CheckRowForWinner(B, i)) {
 			B->WinningOrientation = 'R';
 			B->WinningIndex = i;
 			return 1;
 		  }
 	}
 	for (int i = 0; i < BoardSize; i++) {
-		if (CheckColumnForWinner(&B, i)) {
+		if (CheckColumnForWinner(B, i)) {
 			B->WinningOrientation = 'C';
 			B->WinningIndex = i;
 			return 1;
 		}
 	}
 
-	if(CheckMainDiagonalForWinner(&B)) {
+	if(CheckMainDiagonalForWinner(B)) {
 		B->WinningOrientation = 'P';
 		return 1;
 	}
 
-	if(CheckSecondaryDiagonalForWinner(&B)) {
+	if(CheckSecondaryDiagonalForWinner(B)) {
 		B->WinningOrientation = 'S';
 		return 1;
 	}
@@ -271,7 +270,7 @@ int CheckForWinner(Board *B, int player){
 }
 
 void PrintVictory(Board *B, int player) {
-	PrintBoard(&B);
+	PrintBoard(B);
 	printf("%d\n", (player + 1));
 	switch (B->WinningOrientation) {
 		case 'R':
