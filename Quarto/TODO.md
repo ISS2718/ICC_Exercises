@@ -1,8 +1,7 @@
 # Quarto 
 
 TODO :
-- [ ] Separate functions in other files
-- [ ] Create a make file
+
 MADE :
 - [x] Matriz -> Array
 - [x] Check for winner -> function

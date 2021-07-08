@@ -1,18 +1,9 @@
 #include<stdio.h>
-#include<stdlib.h>
 #include<math.h>
 
 #define BoardSize 4
 #define NumberOfProperties 4
 #define BinaryMask 15
-
-void PrintInBinary(int Decimal) {
-	int Current = Decimal;
-	for (int i = 0; i < NumberOfProperties; i++) {
-		printf("%d", Current % 2);
-		Current /= 2;
-	}
-}
 
 typedef struct Cell {
 	int IsEmpity;
@@ -88,17 +79,6 @@ void PrintBoard(Board* B) {
 		}
 		printf("\n");
 	}
-}
-
-void PrintRemainingPieces(Board* B) {
-	printf("Remaining Pieces: ");
-	for (int i = 0; i < BoardSize * BoardSize; i++) {
-		if (B->RemainingPieces[i] >= 0) {
-			PrintInBinary(i);
-			printf("=%d ", i);
-		}
-	}
-	printf("\n\n");
 }
 
 void WinningCondition(Board* B, int C1, int C0) {
