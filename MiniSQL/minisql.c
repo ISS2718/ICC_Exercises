@@ -70,20 +70,6 @@ void montarTabelaDados(comando *cmd, FILE *fd, int n_tab){
     cmd->n_resultados = n_linhas_antigo;
 }
 
-void removerParagrafo(char *str){
-    char *new_str;
-    new_str = strtok(str, "\n");
-    strcpy(str, new_str);
-    while (new_str != NULL) { 
-        new_str = strtok(NULL, "\n");
-        if(new_str != NULL) {
-            str[strlen(str)-1] = '\0';
-            strcat(str, new_str);
-        }
-    }
-    strcpy(str,new_str);
-    //return new_str;
-}
 
 void imprimeResultados(comando *cmd){
     for(int i =0; i<cmd->n_resultados;i++){
@@ -113,28 +99,15 @@ void preencherStruct(comando *cmd){
     for(int i=0; i<cmd->n_select; i++){
         char * select = malloc(sizeof(char)*strlen(cmd->select[i]));
         if(select == NULL){
-            printf("Nao conseguiu alocar string.");
+            //printf("Nao conseguiu alocar string.");
             exit(-1);
         }
         strcpy(select,cmd->select[i]);
-        char tabela[10];
-        char campo[10];
-        int flag_ponto = 0;
-        int pos_ponto = 0;
-        for(int j =0; j<strlen(select); j++){
-            if(select[j]== '.'){
-                flag_ponto = 1;
-            }
-            if(!flag_ponto){
-                tabela[j] = select[j];
-                pos_ponto = j;
-            }else{
-                campo[j-pos_ponto-1] = select[j+1];
-            }
-        }
-        free(select);
-        tabela[pos_ponto+1] = '\0';
-        
+        char *tabela;
+        char *campo;
+        //printf("%s\n", select);
+        tabela = strtok(select, ".");
+        campo = strtok(NULL, ".");
         int n_arquivo = 0;
         for(int j=0; j<cmd->n_from;j++){
             if(!strcmp(tabela, cmd->from[j])){
@@ -161,7 +134,9 @@ void preencherStruct(comando *cmd){
             }    
         }
         montarTabelaDados(cmd,cmd->arquivos[n_arquivo],n_tab);
+        free(select);
     }
+    
 }
 
 comando criarComando (char * entrada){
@@ -214,20 +189,17 @@ comando criarComando (char * entrada){
                 }
             }
         }
-        
     }
     abrirArquivos(&cmd);
     return cmd;
 }
 
 
-
-
 int main(int argc, char *argv[]){
 char * entrada;
 entrada = malloc(sizeof(char)*TAMANHO_ENTRADA);
 if(entrada==NULL){
-    printf("Nao conseguiu alocar.\n");
+    //printf("Nao conseguiu alocar.\n");
     exit(-1);
 }
 fgets(entrada,TAMANHO_ENTRADA,stdin);

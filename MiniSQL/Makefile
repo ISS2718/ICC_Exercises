@@ -3,7 +3,7 @@ all: minisql
 run: 
 	./minisql
 
-minisql: minisql.c
+minisql: minisql.c 
 	gcc -o minisql minisql.c
 
 
