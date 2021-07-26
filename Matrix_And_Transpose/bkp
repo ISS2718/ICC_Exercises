@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int row;
+    int column;
+    int **matrix;
+} Matrix;
+
+Matrix matrixContructor ();
+void matrixPrinter (Matrix *m);
+void matrixDestructor (Matrix *m);
+
+int main (int argc, char *argv[]) {
+    Matrix m = matrixContructor();
+    matrixPrinter(&m);
+    matrixDestructor(&m);  
+}
+
+Matrix matrixContructor () {
+    Matrix m;
+
+    scanf("%d%d", &m.row, &m.column);
+
+    m.matrix = malloc(sizeof(int) * m.row);\
+    if(m.matrix == NULL) {
+        exit(-1);
+    }
+    for (int i = 0; i < m.row; i++) {
+        m.matrix[i] = malloc(sizeof(int) * m.column);
+        if(m.matrix == NULL) {
+            exit(-1);
+        }
+    }
+
+    for (int i = 0; i < m.row; i++) {
+        for (int j = 0; j < m.column; j++) {
+            scanf("%d", &m.matrix[i][j]);
+        }
+    }
+
+    return m;
+}
+
+void matrixPrinter (Matrix *m) {
+    for (int i = 0; i < m->row; i++) {
+        for (int j = 0; j < m->column; j++) {
+            printf("%d ", m->matrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("\n");
+    
+    for (int i = 0; i < m->column; i++) {
+        for (int j = 0; j < m->row; j++) {
+            printf("%d ", m->matrix[j][i]); 
+        }
+        printf("\n");
+    }
+}
+
+void matrixDestructor (Matrix *m) {
+    free(m->matrix);
+}

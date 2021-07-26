@@ -25,7 +25,13 @@ void destroiComando(comando *cmd){
         free(cmd->from[i]);
     }
     free(cmd->from);
+
+    for (int i = 0; i < cmd->n_from; i++) {
+        fclose(cmd->arquivos[i]);
+    }
+    free(cmd->arquivos);
 }
+
 void abrirArquivos(comando *cmd){
     cmd->arquivos = malloc(sizeof(FILE *)*cmd->n_from);
     for(int i=0; i<cmd->n_from;i++){
@@ -69,7 +75,6 @@ void montarTabelaDados(comando *cmd, FILE *fd, int n_tab){
     }
     cmd->n_resultados = n_linhas_antigo;
 }
-
 
 void imprimeResultados(comando *cmd){
     for(int i =0; i<cmd->n_resultados;i++){
@@ -136,7 +141,6 @@ void preencherStruct(comando *cmd){
         montarTabelaDados(cmd,cmd->arquivos[n_arquivo],n_tab);
         free(select);
     }
-    
 }
 
 comando criarComando (char * entrada){
@@ -169,7 +173,6 @@ comando criarComando (char * entrada){
                         cmd.select[cmd.n_select-1] = malloc(sizeof(char)*strlen(sub_str));
                         strcpy(cmd.select[cmd.n_select-1], sub_str);
                     }
-                    free(sub_str);
                 }else{//from
                     cmd.n_from +=1;
                     if(cmd.n_from==1){
@@ -181,24 +184,23 @@ comando criarComando (char * entrada){
                         cmd.from[cmd.n_from-1] = malloc(sizeof(char)*strlen(sub_str));
                         strcpy(cmd.from[cmd.n_from-1], sub_str);
                     }
-                    free(sub_str);
                 }
             }else{
                 if(!strcmp(sub_str, "from")){
                     flag_from=1;
                 }
             }
+            free(sub_str);
         }
     }
     abrirArquivos(&cmd);
     return cmd;
 }
 
-
 int main(int argc, char *argv[]){
 char * entrada;
 entrada = malloc(sizeof(char)*TAMANHO_ENTRADA);
-if(entrada==NULL){
+if(entrada==NULL) {
     //printf("Nao conseguiu alocar.\n");
     exit(-1);
 }
