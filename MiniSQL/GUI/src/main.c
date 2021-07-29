@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include <stdio.h>
 
 int main(int argc, char *argv[])
 {
@@ -8,7 +9,7 @@ int main(int argc, char *argv[])
     gtk_init(&argc, &argv);
 
     builder = gtk_builder_new();
-    gtk_builder_add_from_file (builder, "./glade/testeGTK.glade", NULL);
+    gtk_builder_add_from_file (builder, "./glade/MiniSQL_GUI.glade", NULL);
 
     window = GTK_WIDGET(gtk_builder_get_object(builder, "main_Window"));
     gtk_builder_connect_signals(builder, NULL);
@@ -22,9 +23,13 @@ int main(int argc, char *argv[])
 }
 
 // called when window is closed
-G_MODULE_EXPORT void on_window_main_destroy()
+G_MODULE_EXPORT void on_mainWindow_destroy()
 {
     gtk_main_quit();
 }
 
-//gcc -o miniSQL main.c -Wall `pkg-config --cflags --libs gtk+-3.0`
+G_MODULE_EXPORT void on_main_SearchBar_activate (GtkEntry *entry, gpointer user_data) {
+    const char *str_entry = gtk_entry_get_text (entry);
+    printf("%s\n", str_entry);
+}
+ //select Progs.Sigla, Doscentes.Nome from Progs, docentes
