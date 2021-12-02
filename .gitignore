@@ -1,0 +1,6 @@
+*.o
+*.pdf
+*.rar
+*.zip
+*.exe
+**/.vscode
