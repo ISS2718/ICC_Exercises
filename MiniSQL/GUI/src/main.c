@@ -55,25 +55,24 @@ int main(int argc, char *argv[])
 }
 
 // called when window is closed
-G_MODULE_EXPORT void on_mainWindow_destroy()
+G_MODULE_EXPORT void on_main_Window_destroy()
 {
     gtk_main_quit();
 }
 
-G_MODULE_EXPORT void on_main_SearchBar_activate (GtkEntry *entry, gpointer user_data) {
-    const char *str_GUI_entry = gtk_entry_get_text (entry);
+G_MODULE_EXPORT void on_main_Entry_activate (GtkEntry *entry, gpointer user_data) {
+    char *str_GUI_entry = (char*) gtk_entry_get_text (entry);
     char *str_CMD_entry = malloc(sizeof(char) * strlen(str_GUI_entry) + 1);
     strcpy(str_CMD_entry, str_GUI_entry);
     str_CMD_entry[strlen(str_GUI_entry)] = '\0';
     printf("%s\n", str_CMD_entry);
     comando cmd = criarComando(str_CMD_entry);
     free(str_CMD_entry);
-    printf("criei o comando");
     preencherStruct(&cmd);
     imprimeResultados(&cmd);
     destroiComando(&cmd);
 }
- //select Progs.Sigla, Doscentes.Nome from Progs, docentes
+ //select Progs.Sigla, Doscentes.Nome from Progs, Docentes
 
 void destroiComando(comando *cmd){
     for (int i=0; i<cmd->n_select;i++){

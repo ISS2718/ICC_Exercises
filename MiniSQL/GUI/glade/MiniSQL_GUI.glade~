@@ -2,6 +2,40 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
+  <object class="GtkListStore" id="liststore1">
+    <columns>
+      <!-- column-name Ano -->
+      <column type="gint"/>
+      <!-- column-name Nível -->
+      <column type="gint"/>
+      <!-- column-name Nome -->
+      <column type="gchararray"/>
+      <!-- column-name Codigo -->
+      <column type="gchararray"/>
+      <!-- column-name Nacionalidade -->
+      <column type="gchararray"/>
+      <!-- column-name País -->
+      <column type="gchararray"/>
+      <!-- column-name Sexo -->
+      <column type="gchararray"/>
+      <!-- column-name Instituição -->
+      <column type="gchararray"/>
+      <!-- column-name Programa -->
+      <column type="gchararray"/>
+      <!-- column-name Sigla -->
+      <column type="gchararray"/>
+      <!-- column-name Doutorado -->
+      <column type="gchararray"/>
+      <!-- column-name Area -->
+      <column type="gchararray"/>
+      <!-- column-name Autor -->
+      <column type="gchararray"/>
+      <!-- column-name Idioma -->
+      <column type="gchararray"/>
+      <!-- column-name Orientador -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkWindow" id="main_Window">
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">MiniSQL</property>
@@ -17,15 +51,16 @@
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="margin-right">689</property>
             <property name="orientation">vertical</property>
             <property name="spacing">1</property>
             <child>
               <object class="GtkSearchEntry" id="main_SearchBar">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="margin-start">30</property>
+                <property name="margin-start">29</property>
                 <property name="margin-end">30</property>
-                <property name="margin-top">10</property>
+                <property name="margin-top">11</property>
                 <property name="margin-bottom">10</property>
                 <property name="primary-icon-stock">gtk-find</property>
                 <property name="secondary-icon-activatable">False</property>
@@ -36,7 +71,7 @@ select Progs.Sigla, Docentes.Nome from Progs, Docentes where Docentes.Sexo = "Ma
                 <signal name="activate" handler="on_main_SearchBar_activate" swapped="no"/>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">0</property>
               </packing>
@@ -48,16 +83,7 @@ select Progs.Sigla, Docentes.Nome from Progs, Docentes where Docentes.Sexo = "Ma
           </packing>
         </child>
         <child>
-          <object class="GtkTextView">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="margin-right">1039</property>
-            <property name="margin-bottom">669</property>
-          </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">0</property>
-          </packing>
+          <placeholder/>
         </child>
       </object>
     </child>

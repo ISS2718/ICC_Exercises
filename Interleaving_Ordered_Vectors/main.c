@@ -20,7 +20,6 @@ int main (int argc, char *argv[]) {
     
     int C[m + n];
     VectorOrganization(A, m, B, n, C);
-    
 
     for (int i = 0; i < m + n; i++) {
         printf("%d ", C[i]);
@@ -31,6 +30,7 @@ void VectorOrganization (int A[], int m, int B[], int n, int C[]) {
     int count_m = 0;
     int count_n = 0;
     int count_c = 0;
+    
     while (count_c != m + n) {
         if (count_m < m && count_n < n){
             if(A[count_m] < B[count_n]) {
